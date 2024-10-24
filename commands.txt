@@ -1,0 +1,65 @@
+LIST OF COMMANDS FOR THE DEMOS
+
+
+Change directory into our Workshop folder
+-----------------------------------------
+cd /home/devnet/workshop/devwks1700
+
+
+
+Activate the Virtual Environment
+--------------------------------
+source venv/bin/activate
+
+
+
+Verify Ansible installation and version (also provides location of config file)
+---------------------------------------
+ansible-config –-version
+
+(if not installed, perform the following)
+
+pip install --upgrade ansible
+ansible-config –-version
+
+
+
+Create Ansible config file on CLI and verify its contents
+---------------------------------------------------------
+echo -e "[defaults]\ngathering = explicit\nhost_key_checking = True\ntimeout = 30\ndeprecation_warnings = False\nretry_files_enabled = False\nDEFAULT_LOCAL_TMP = ./ansible_tmp\ntransport = paramiko\nlook_for_keys = False\ninventory = ./inventory\nroles_path = ./roles\ncollections_path = ./collections" > ansible.cfg
+
+cat ansible.cfg
+
+
+
+Create Ansible config file with Automation
+------------------------------------------
+rm ansible.cfg
+cd ansible-playbooks
+ansible-playbook first_playbook.yaml
+cat ../ansible.cfg
+
+
+
+Run playbook to download the hello_world playbook and run that one too
+——————————————————————————————————————————————————————————————————————
+ansible-playbook github.yaml
+
+
+
+Check if jq is installed and, if not, have Ansible install it using cURL
+————————————————————————————————————————————————————————————————————————
+ansible-playbook curl.yaml
+
+
+
+Run the 'bad' playbook with verbosity to observe detailed error information
+--------------------------------------------------------------------------
+ansible-playbook bad_playbook.yaml -vvvv
+
+
+
+Clone intro-to-ansible repo from GitHub
+---------------------------------------
+git clone https://github.com/qsnyder/devwks1700
+cd devwks1700

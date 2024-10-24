@@ -1,0 +1,57 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Check if Ansible is installed
+      command: ansible-config --version
+      register: ansible_check
+      changed_when: false
+      ignore_errors: true
+
+    - name: Install Ansible
+      pip:
+        name: ansible
+        state: latest
+      when: ansible_check.failed
+
+    - name: Check Ansible version
+      command: ansible-config --version
+      register: version
+      changed_when: false
+
+    - name: Print Ansible version
+      debug: var=version.stdout_lines
+
+    - name: Check if Ansible configuration file exists
+      stat:
+        path: "~/devwks1700/ansible-playbooks/ansible.cfg"
+      register: ansible_cfg
+
+    - name: Create Ansible configuration file
+      blockinfile:
+        path: "~/devwks1700/ansible-playbooks/ansible.cfg"
+        create: true
+        block: |
+          [defaults]
+          gathering = explicit
+          host_key_checking = True
+          timeout = 30
+          deprecation_warnings = False
+          retry_files_enabled = False
+          DEFAULT_LOCAL_TMP = ./ansible_tmp
+          transport = paramiko
+          look_for_keys = False
+          inventory = ./inventory
+          roles_path = ./roles
+          collections_path = ./collections
+      when: not ansible_cfg.stat.exists
+
+    - name: Verify Ansible configuration file
+      command: cat ~/devwks1700/ansible-playbooks/ansible.cfg
+      register: config
+      changed_when: false
+      when: not ansible_cfg.stat.exists
+
+    - debug: var=config.stdout_lines
+      when: not ansible_cfg.stat.exists
